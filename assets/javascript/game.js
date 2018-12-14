@@ -67,7 +67,7 @@ $(document).ready(function() {
         createPlayerCharacters();
         createEnemyCharacters();
         createAttackButton();
-        createResetButton();
+        // createResetButton();
     }
 
     function createAttackButton() {
@@ -190,9 +190,9 @@ $(document).ready(function() {
             showStatsOnPage();
         });
     
-        $("#reset-button").on("click", function() {
-            resetGame();
-        });
+        // $("#reset-button").on("click", function() {
+        //     resetGame();
+        // });
     }
 
     function moveOtherCharactersToEnemy() {
@@ -268,8 +268,8 @@ $(document).ready(function() {
         } 
     });
 
-    $("#reset-button").on("click", function() {
-        resetGame();
-    });
+    // $("#reset-button").on("click", function() {
+    //     resetGame();
+    // });
 });
 
