@@ -4,7 +4,7 @@ $(document).ready(function() {
     var possibleEnemies = ["Kirk", "Spock", "Scotty"];
     var possibleEnemyImages = ["assets/images/kirk.jpg", "assets/images/spock.jpeg", "assets/images/scotty.jpg"];
 
-    var defeatsToWin = possibleCharacters.length + possibleEnemies;
+    var defeatsToWin = (possibleCharacters.length - 1) + possibleEnemies.length;
     var numberOfVictories = 0;
 
     var chosenCharacter = "";
@@ -33,7 +33,7 @@ $(document).ready(function() {
             playerCharButton.attr("name-value", possibleCharacters[i]);
             playerCharButton.attr("health-value", 100);
             playerCharButton.attr("attack-value", 6);
-            playerCharButton.attr("counter-attack-value", 6);
+            playerCharButton.attr("counter-attack-value", 12);
             playerCharButton.html("<img src=" + possibleCharImages[i] + " width='100%' height='70%'/>" );
             playerCharButton.prepend($(playerCharButton).attr("name-value"));
             $("#your-character").append(playerCharButton);
@@ -46,6 +46,7 @@ $(document).ready(function() {
 
     function addHealthToEnemyButton() {
         $(".selected-enemy-char").append("<br></br>" + "<p id='selected-enemy-health'>" + $(".selected-enemy-char").attr("health-value") + "</p>");
+        $(".selected-evil-char").append("<br></br>" + "<p id='selected-enemy-health'>" + $(".selected-evil-char").attr("health-value") + "</p>");
     }
     
     function createEnemyCharacters() {
@@ -67,7 +68,6 @@ $(document).ready(function() {
         createPlayerCharacters();
         createEnemyCharacters();
         createAttackButton();
-        // createResetButton();
     }
 
     function createAttackButton() {
@@ -77,12 +77,6 @@ $(document).ready(function() {
         $("#button-area").append(attackButton);
     }
 
-    function createResetButton() {
-        var resetButton = $("<button>");
-        resetButton.attr("id", "reset-button");
-        resetButton.text("Reset");
-        $("#button-area").append(resetButton);
-    }
     function updateEnemyValues() {
         enemyHealth -= playerAttack;
         if (enemyHealth < 1) {
@@ -90,9 +84,11 @@ $(document).ready(function() {
             playerAttack = parseInt(playerAttack) + 6;
             attackButtonEnabled = false;
             $(".selected-enemy-char").remove();
-            isEnemySelected = false;
+            $(".selected-evil-char").remove();
             alert("You defeated " + enemyName + "!");
+            isEnemySelected = false;
             numberOfVictories++;
+            isEnemyDead = false;
             if (numberOfVictories === defeatsToWin){
                 alert("You saved the Galaxy!");
                 resetGame();
@@ -101,11 +97,15 @@ $(document).ready(function() {
     }
 
     function updatePlayerValues() {
-        if (isEnemyDead === false) {
+        if (numberOfVictories === defeatsToWin){
+            alert("You saved the Galaxy!");
+            resetGame();
+        }
+        else if (isEnemySelected === true) {
             playerHealth -= enemyCounterAttack;
             playerAttack = parseInt(playerAttack) + 6;
             attackButtonEnabled = true;
-            console.log(playerAttack);
+            isEnemyDead = false;
         }
         if (playerHealth < 1) {
             gameOver();
@@ -113,13 +113,7 @@ $(document).ready(function() {
     }
 
     function gameOver() {
-        alert("You Lose");
-        resetButtonEnable()
-    }
-
-    function resetButtonEnable() {
-        resetButtonEnabled = true;
-        resetGame();
+        alert("Game Over");
     }
 
     function resetGame() {
@@ -127,6 +121,7 @@ $(document).ready(function() {
         possibleEnemies = ["Kirk", "Spock", "Scotty"];
         $(".player-char").remove();
         $(".enemy-char").remove();
+        $(".selected-evil-char").remove();
         $(".selected-player-char").remove();
         $("#attack-button").remove();
         $("#reset-button").remove();
@@ -189,10 +184,6 @@ $(document).ready(function() {
             writeValuesToChar();
             showStatsOnPage();
         });
-    
-        // $("#reset-button").on("click", function() {
-        //     resetGame();
-        // });
     }
 
     function moveOtherCharactersToEnemy() {
@@ -202,16 +193,17 @@ $(document).ready(function() {
         $(".player-char").removeClass("player-char");
         $(".evil-char").on("click", function() {
             if (isEnemySelected === false) {
+                $(".selected-evil-char").remove();
                 $(this).css("background-color", "red");
                 $(this).css("color", "white");
-                $(this).addClass("selected-enemy-char");
+                $(this).addClass("selected-evil-char");
                 enemyName = $(this).attr("name-value");
                 isEnemySelected = true;
                 addHealthToEnemyButton();
                 attackButtonEnabled = true;
                 enemyHealth = $(this).attr("health-value");
                 enemyCounterAttack = $(this).attr("counter-attack-value");
-                $(".selected-enemy-char").appendTo("#defender-area");
+                $(".selected-evil-char").appendTo("#defender-area");
                 showStatsOnPage();
             }
         });
@@ -267,9 +259,5 @@ $(document).ready(function() {
             alert("Please choose a enemy to attack!");
         } 
     });
-
-    // $("#reset-button").on("click", function() {
-    //     resetGame();
-    // });
 });
 
